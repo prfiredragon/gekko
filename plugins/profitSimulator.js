@@ -79,21 +79,21 @@ Logger.prototype.processAdvice = function(advice) {
   // virtually trade all USD to BTC at the current price
   if(what === 'long') {
     this.current.asset += this.extractFee(this.current.currency / this.price);
+    if(mode === 'backtest') {
+      log.info(`${time}: Profit simulator got advice to long \t${this.current.currency.toFixed(3)} ${this.currency} => ${this.current.asset.toFixed(3)} ${this.asset}`);
+    }
     this.current.currency = 0;
     this.trades++;
-
-    if(mode === 'backtest')
-      log.info(`Profit simulator got advice to long\t@ ${time}, buying ${this.current.asset} ${this.asset} \t(${this.current.asset})`);
   }
 
   // virtually trade all BTC to USD at the current price
   if(what === 'short') {
     this.current.currency += this.extractFee(this.current.asset * this.price);
+    if(mode === 'backtest') {
+      log.info(`${time}: Profit simulator got advice to short \t${this.current.currency.toFixed(3)} ${this.currency} <= ${this.current.asset.toFixed(3)} ${this.asset}`);
+    }
     this.current.asset = 0;
     this.trades++;
-
-    if(mode === 'backtest')
-      log.info(`Profit simulator got advice to short\t@ ${time}, selling ${this.current.asset} ${this.asset} \t(${this.current.currency})`);
   }
 
   if(mode === 'realtime')
@@ -180,8 +180,7 @@ Logger.prototype.finalize = function() {
   log.info(
     '(PROFIT REPORT)',
     'timespan:\t\t\t',
-    timespan.humanize(),
-    'days'
+    timespan.humanize()
   );
 
   log.info();
